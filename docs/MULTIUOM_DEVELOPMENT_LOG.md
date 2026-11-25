@@ -84,11 +84,11 @@ Menambahkan dukungan multi-satuan (UOM), konversi ke satuan stok, harga per satu
 
 ### Savepoint 1 — dibuat ulang (2026-11-25)
 
-- Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru pada 20:18 WIB.
+- Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru setelah perbaikan hapus lalu buat ulang satuan.
 - Snapshot lengkap tersimpan di `C:\Users\MRX\Desktop\Aronium-UOM-Savepoints\savepoint-1` dan `savepoint-1.zip`.
-- Snapshot mencakup source/build modul v1.0.2, installer EXE/ZIP, migration, tools, database SQLite konsisten terbaru, manifest SHA-256, dan script restore.
+- Snapshot mencakup source/build modul v1.0.3, installer EXE/ZIP, migration, tools, database SQLite konsisten terbaru, manifest SHA-256, dan script restore.
 - Commit GitHub terbaru dicatat pada manifest `savepoint-1.json`; checksum ZIP final dicatat pada README indeks savepoint.
-- Branch: `savepoint/1`; tag: `savepoint-1`; release: `v1.0.2`.
+- Branch: `savepoint/1`; tag: `savepoint-1`; release: `v1.0.3`.
 - Database snapshot bersifat lokal dan tidak diunggah ke repository publik.
 - Restore dilakukan melalui `RESTORE-SAVEPOINT-1.ps1 -RestoreDatabase`.
 
@@ -100,6 +100,14 @@ Menambahkan dukungan multi-satuan (UOM), konversi ke satuan stok, harga per satu
 - Penyimpanan `ProductUnit` sekarang memakai upsert berdasarkan pasangan `ProductId + UnitId`, mendeteksi duplikasi secara eksplisit, serta menangani baris lama yang sudah dihapus.
 - Verifikasi pada salinan database aktif untuk produk `Ladaku` (ProductId 908): 2 baris nonaktif terbaca di editor, `SaveAll` plugin berhasil tanpa exception, jumlah baris tetap 2, dan 0 satuan nonaktif tampil di picker kasir.
 - Modul berhasil dimuat ulang oleh Aronium POS 1.51.1.0 tanpa error baru.
+
+### Perbaikan hapus lalu buat ulang satuan (2026-11-25)
+
+- Gejala: setelah semua `ProductUnit` produk dihapus dan berhasil disimpan, penambahan satuan baru gagal dengan `Expected a non-null scalar value of type System.Int32, but the query returned no rows`.
+- Akar masalah: `FindProductUnitId` memakai `ExecuteScalar<int>` atas query `SELECT Id ...`. Implementasi `Aronium.Data.SQLite` melempar exception bila hasil query tidak memiliki baris, sehingga kondisi "belum ada ProductUnit" tidak dapat direpresentasikan sebagai `0`.
+- Perbaikan: pencarian ID memakai `COALESCE((SELECT Id ... LIMIT 1),0)`, sehingga selalu menghasilkan satu baris scalar dan kondisi tidak ditemukan menghasilkan `0` dengan aman.
+- Regression test memakai salinan database aktif dan semantik `ExecuteScalar` yang sama dengan vendor: tambah satuan pertama berhasil, hapus satuan tersebut, lalu buat satuan lain juga berhasil. Jumlah baris akhir tetap satu dan tidak ada exception.
+- Versi distribusi berikutnya: `v1.0.3`.
 
 ### Belum selesai
 

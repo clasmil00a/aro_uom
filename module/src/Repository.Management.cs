@@ -69,8 +69,11 @@ namespace Aronium.Pos.MultiUom
 
         private int FindProductUnitId(int productId, int unitId)
         {
-            return db.ExecuteScalar<int>("SELECT Id FROM ProductUnit WHERE ProductId=" + productId +
-                " AND UnitId=" + unitId + " LIMIT 1", null);
+            // Aronium.Data.SQLite.ExecuteScalar<T> melempar exception bila query
+            // tidak menghasilkan baris. Gunakan subquery + COALESCE agar
+            // "belum ada" selalu dikembalikan sebagai 0, bukan exception.
+            return db.ExecuteScalar<int>("SELECT COALESCE((SELECT Id FROM ProductUnit WHERE ProductId=" + productId +
+                " AND UnitId=" + unitId + " LIMIT 1),0)", null);
         }
 
         public void DeleteProductUnit(int productId, int productUnitId)

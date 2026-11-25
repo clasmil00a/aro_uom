@@ -14,7 +14,10 @@ Modul ini:
 - menyimpan detail UOM pada PosOrderItem dan DocumentItem;
 - menyediakan tab "Satuan & Harga" pada pengelolaan produk.
 
-Versi paket: 1.0.2
+Versi paket: 1.0.3
+
+Catatan v1.0.3: alur hapus seluruh satuan produk, simpan, lalu buat
+satuan baru sudah diperbaiki dan tidak lagi menampilkan error scalar SQLite.
 
 INSTALLER OTOMATIS
 ------------------

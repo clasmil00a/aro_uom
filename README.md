@@ -13,14 +13,14 @@ Module UOM (Unit of Measure) untuk Aronium POS 1.51.1.0. Modul ini menambahkan p
 
 ## Rilis terbaru
 
-Rilis `v1.0.2` memperbaiki penyimpanan satuan produk yang sebelumnya nonaktif. Editor native kini memuat seluruh baris satuan (aktif dan nonaktif), menyimpan dengan aman tanpa memicu unique constraint, dan tetap menyembunyikan satuan nonaktif dari picker kasir.
+Rilis `v1.0.3` memperbaiki alur menghapus seluruh satuan produk, menyimpan, lalu membuat satuan baru. Lookup `ProductUnit` kini aman ketika belum ada baris sehingga tidak lagi menampilkan error `Expected a non-null scalar value ... query returned no rows`.
 
 Unduhan:
 
 - `Install-Aronium-UOM.exe`
 - `Install-Aronium-UOM-1.51.1.0.zip`
 
-Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releases/tag/v1.0.2).
+Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releases/tag/v1.0.3).
 
 ## Kompatibilitas
 

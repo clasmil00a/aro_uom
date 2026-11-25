@@ -1,6 +1,6 @@
 ﻿{
     "module":  "Aronium.Pos.MultiUom",
-    "installerVersion":  "1.0.2",
+    "installerVersion":  "1.0.3",
     "requiredAroniumVersion":  "1.51.1.0",
-    "payloadSha256":  "07312EB687A834E01D3DA8519380FB7837B860A5B45377C1E42DAC34C1E1EA1E"
+    "payloadSha256":  "0772FB611BAE8699A740A8247281C7F10CD2001C0300CF89FDF87F2E5E2AAE41"
 }
