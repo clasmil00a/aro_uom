@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Language code="en" name="English">
+  <MultiUom>
+    <Title Text="Multi unit of measure" />
+  </MultiUom>
+</Language>
