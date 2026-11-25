@@ -27,7 +27,7 @@ namespace Aronium.Pos.MultiUom
             }
 
             int productId = Convert.ToInt32(product.Id, CultureInfo.InvariantCulture);
-            foreach (ProductUnitOption row in repository.GetProductUnits(productId))
+            foreach (ProductUnitOption row in repository.GetAllProductUnits(productId))
                 unitRows.Add(row);
             foreach (PriceTierOption row in repository.GetAllTiers(productId))
                 tierRows.Add(row);

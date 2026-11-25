@@ -14,6 +14,8 @@ Modul ini:
 - menyimpan detail UOM pada PosOrderItem dan DocumentItem;
 - menyediakan tab "Satuan & Harga" pada pengelolaan produk.
 
+Versi paket: 1.0.2
+
 INSTALLER OTOMATIS
 ------------------
 Di PC lain dengan Aronium POS 1.51.1.0, jalankan:
@@ -38,6 +40,8 @@ Pengelolaan utama dilakukan langsung di Aronium:
    - Default: satu satuan yang otomatis dipilih di kasir.
    - Aktif: mengaktifkan/menonaktifkan satuan.
 5. Tepat satu satuan harus memiliki Faktor 1; satuan itu otomatis menjadi dasar.
+   Satuan nonaktif tetap terlihat di editor agar dapat diaktifkan kembali, tetapi
+   tidak muncul di pemilih kasir.
 6. Pada tabel "Harga bertingkat", klik "Tambah tier" lalu isi Satuan,
    Min. Qty, dan Harga/unit.
 7. Klik tombol **Save** utama Aronium; tab Multi-UOM ikut tersimpan pada proses yang sama.

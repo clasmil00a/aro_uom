@@ -9,9 +9,19 @@ namespace Aronium.Pos.MultiUom
     {
         public List<ProductUnitOption> GetProductUnits(int productId)
         {
+            return ReadProductUnits(productId, false);
+        }
+
+        public List<ProductUnitOption> GetAllProductUnits(int productId)
+        {
+            return ReadProductUnits(productId, true);
+        }
+
+        private List<ProductUnitOption> ReadProductUnits(int productId, bool includeDisabled)
+        {
             string sql = "SELECT PU.Id,PU.ProductId,PU.UnitId,U.Name,U.Symbol,PU.ConversionFactor,PU.Price,PU.IsBaseUnit,PU.IsDefault,PU.IsEnabled " +
                 "FROM ProductUnit PU INNER JOIN Unit U ON U.Id=PU.UnitId " +
-                "WHERE PU.ProductId=" + productId + " AND PU.IsEnabled=1 AND U.IsEnabled=1 " +
+                "WHERE PU.ProductId=" + productId + (includeDisabled ? "" : " AND PU.IsEnabled=1 AND U.IsEnabled=1") + " " +
                 "ORDER BY PU.IsDefault DESC,PU.IsBaseUnit DESC,U.Name";
             return db.ExecuteReader<List<ProductUnitOption>>(sql, null, delegate(IDataReader r)
             {

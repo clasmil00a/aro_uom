@@ -1,6 +1,6 @@
 # Log Pengembangan Aronium Multi-UOM
 
-_Status terakhir: 2026-11-24_
+_Status terakhir: 2026-11-25_
 
 ## Tujuan
 
@@ -81,6 +81,25 @@ Menambahkan dukungan multi-satuan (UOM), konversi ke satuan stok, harga per satu
 - Database dibackup sebelum instalasi; checksum DLL terverifikasi dan log installer disimpan di `%LOCALAPPDATA%\Aronium\Log\ModuleUomInstaller.log`.
 - Installer berhasil dijalankan pada PC ini dan module tetap berhasil dimuat setelah instalasi.
 - Paket ZIP tersedia di `Tools\Install-Aronium-UOM-1.51.1.0.zip`.
+
+### Savepoint 1 — dibuat ulang (2026-11-25)
+
+- Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru pada 14:44 WIB.
+- Snapshot lengkap tersimpan di `C:\Users\MRX\Desktop\Aronium-UOM-Savepoints\savepoint-1` dan `savepoint-1.zip`.
+- Snapshot mencakup source/build modul v1.0.1, installer EXE/ZIP, migration, tools, database SQLite konsisten terbaru, manifest SHA-256, dan script restore.
+- GitHub commit yang ditandai: `0bf89ef7f455ba7cd4765d1a2b241a17b792a12a`.
+- Branch: `savepoint/1`; tag: `savepoint-1`; release: `v1.0.1`.
+- Database snapshot bersifat lokal dan tidak diunggah ke repository publik.
+- Restore dilakukan melalui `RESTORE-SAVEPOINT-1.ps1 -RestoreDatabase`.
+
+### Perbaikan baris satuan nonaktif / UNIQUE constraint (2026-11-25)
+
+- Akar masalah: editor hanya memuat `ProductUnit` aktif, sedangkan baris nonaktif tetap memenuhi unique constraint `ProductId + UnitId`. Penambahan satuan yang sudah pernah nonaktif karena itu mencoba `INSERT` dan gagal dengan `UNIQUE constraint failed`.
+- Editor kini memakai query terpisah yang memuat seluruh baris satuan produk, termasuk nonaktif, sehingga baris lama dapat diaktifkan kembali.
+- Query khusus kasir tetap hanya mengambil satuan aktif; satuan nonaktif tidak lagi muncul pada dialog picker.
+- Penyimpanan `ProductUnit` sekarang memakai upsert berdasarkan pasangan `ProductId + UnitId`, mendeteksi duplikasi secara eksplisit, serta menangani baris lama yang sudah dihapus.
+- Verifikasi pada salinan database aktif untuk produk `Ladaku` (ProductId 908): 2 baris nonaktif terbaca di editor, `SaveAll` plugin berhasil tanpa exception, jumlah baris tetap 2, dan 0 satuan nonaktif tampil di picker kasir.
+- Modul berhasil dimuat ulang oleh Aronium POS 1.51.1.0 tanpa error baru.
 
 ### Belum selesai
 

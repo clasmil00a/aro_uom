@@ -11,6 +11,17 @@ Module UOM (Unit of Measure) untuk Aronium POS 1.51.1.0. Modul ini menambahkan p
 - Editor native pada tab **Satuan & Harga** di Management → Products.
 - Installer mandiri untuk PC dengan Aronium POS 1.51.1.0.
 
+## Rilis terbaru
+
+Rilis `v1.0.2` memperbaiki penyimpanan satuan produk yang sebelumnya nonaktif. Editor native kini memuat seluruh baris satuan (aktif dan nonaktif), menyimpan dengan aman tanpa memicu unique constraint, dan tetap menyembunyikan satuan nonaktif dari picker kasir.
+
+Unduhan:
+
+- `Install-Aronium-UOM.exe`
+- `Install-Aronium-UOM-1.51.1.0.zip`
+
+Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releases/tag/v1.0.2).
+
 ## Kompatibilitas
 
 - Aronium POS: **1.51.1.0**

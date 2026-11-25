@@ -22,6 +22,7 @@ namespace Aronium.Pos.MultiUom
 
             int productId = Convert.ToInt32(product.Id, CultureInfo.InvariantCulture);
             var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var unitIds = new HashSet<int>();
             int defaults = 0;
             int baseUnits = 0;
             logger.Info("Multi-UOM native editor rows: units=" + unitRows.Count + ", tiers=" + tierRows.Count);
@@ -32,6 +33,17 @@ namespace Aronium.Pos.MultiUom
                 if (!names.Add(row.UnitName)) { Show("Satuan '" + row.UnitName + "' duplikat."); return false; }
                 if (row.ConversionFactor <= 0) { Show("Faktor satuan '" + row.UnitName + "' harus lebih besar dari nol."); return false; }
                 if (row.Price < 0) { Show("Harga satuan '" + row.UnitName + "' tidak boleh negatif."); return false; }
+                int effectiveUnitId = row.UnitId;
+                if (row.ProductUnitId <= 0 || row.UnitName != row.OriginalUnitName)
+                {
+                    UnitDefinition existingDefinition = FindUnit(row.UnitName);
+                    effectiveUnitId = existingDefinition == null ? 0 : existingDefinition.Id;
+                }
+                if (effectiveUnitId > 0 && !unitIds.Add(effectiveUnitId))
+                {
+                    Show("Dua baris menunjuk ke satuan yang sama: '" + row.UnitName + "'.");
+                    return false;
+                }
                 if (row.IsDefault) defaults++;
                 if (row.ConversionFactor == 1m) baseUnits++;
             }

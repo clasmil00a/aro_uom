@@ -10,7 +10,7 @@ namespace Aronium.Pos.MultiUom
         public List<UnitDefinition> GetUnits()
         {
             return db.ExecuteReader<List<UnitDefinition>>(
-                "SELECT Id,Name,Symbol,IsEnabled FROM Unit WHERE IsEnabled=1 ORDER BY Name", null,
+                "SELECT Id,Name,Symbol,IsEnabled FROM Unit ORDER BY Name", null,
                 delegate(IDataReader r)
                 {
                     var list = new List<UnitDefinition>();
@@ -38,22 +38,39 @@ namespace Aronium.Pos.MultiUom
         public void SaveProductUnit(ProductUnitOption value)
         {
             int productId = Convert.ToInt32(value.ProductId, CultureInfo.InvariantCulture);
+            if (value.UnitId <= 0) throw new InvalidOperationException("Satuan produk belum memiliki satuan yang valid.");
+            int existingId = FindProductUnitId(productId, value.UnitId);
+            if (value.ProductUnitId > 0 && existingId > 0 && existingId != value.ProductUnitId)
+                throw new InvalidOperationException("Satuan tersebut sudah digunakan oleh produk ini.");
+
             if (value.IsBaseUnit)
                 Execute("UPDATE ProductUnit SET IsBaseUnit=0 WHERE ProductId=" + productId);
             if (value.IsDefault)
                 Execute("UPDATE ProductUnit SET IsDefault=0 WHERE ProductId=" + productId);
-            if (value.ProductUnitId > 0)
+
+            int targetId = existingId > 0 ? existingId : value.ProductUnitId;
+            if (targetId > 0)
             {
-                Execute("UPDATE ProductUnit SET UnitId=" + value.UnitId + ",ConversionFactor=" + N(value.ConversionFactor) +
+                int affected = Execute("UPDATE ProductUnit SET UnitId=" + value.UnitId + ",ConversionFactor=" + N(value.ConversionFactor) +
                     ",Price=" + N(value.Price) + ",IsBaseUnit=" + Bit(value.IsBaseUnit) + ",IsDefault=" + Bit(value.IsDefault) +
-                    ",IsEnabled=" + Bit(value.IsEnabled) + " WHERE Id=" + value.ProductUnitId + " AND ProductId=" + productId);
-                return;
+                    ",IsEnabled=" + Bit(value.IsEnabled) + " WHERE Id=" + targetId + " AND ProductId=" + productId);
+                if (affected > 0)
+                {
+                    value.ProductUnitId = targetId;
+                    return;
+                }
             }
+
             Execute("INSERT INTO ProductUnit(ProductId,UnitId,ConversionFactor,Price,IsBaseUnit,IsDefault,IsEnabled) VALUES(" +
                 productId + "," + value.UnitId + "," + N(value.ConversionFactor) + "," + N(value.Price) + "," +
                 Bit(value.IsBaseUnit) + "," + Bit(value.IsDefault) + "," + Bit(value.IsEnabled) + ")");
-            foreach (ProductUnitOption saved in GetProductUnits(productId))
-                if (saved.UnitId == value.UnitId) { value.ProductUnitId = saved.ProductUnitId; break; }
+            value.ProductUnitId = FindProductUnitId(productId, value.UnitId);
+        }
+
+        private int FindProductUnitId(int productId, int unitId)
+        {
+            return db.ExecuteScalar<int>("SELECT Id FROM ProductUnit WHERE ProductId=" + productId +
+                " AND UnitId=" + unitId + " LIMIT 1", null);
         }
 
         public void DeleteProductUnit(int productId, int productUnitId)
