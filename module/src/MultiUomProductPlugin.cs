@@ -47,9 +47,9 @@ namespace Aronium.Pos.MultiUom
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                 SelectionMode = DataGridSelectionMode.Single, CanUserAddRows = false, CanUserDeleteRows = false
             };
-            tierGrid.Columns.Add(EditColumn("Satuan", "UnitName", 145));
-            tierGrid.Columns.Add(EditColumn("Min. Qty", "MinQuantity", 75));
-            tierGrid.Columns.Add(MoneyColumn("Harga / unit", "Price", 135));
+            tierGrid.Columns.Add(EditColumn("Satuan", "UnitName", 135));
+            tierGrid.Columns.Add(EditColumn("Min. Qty", "MinQuantity", 100));
+            tierGrid.Columns.Add(MoneyColumn("Harga / unit", "Price", 145));
 
             BuildLayout();
             ApplyGridStyle(unitGrid);
