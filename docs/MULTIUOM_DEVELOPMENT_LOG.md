@@ -84,11 +84,11 @@ Menambahkan dukungan multi-satuan (UOM), konversi ke satuan stok, harga per satu
 
 ### Savepoint 1 — dibuat ulang (2026-11-25)
 
-- Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru pada 14:44 WIB.
+- Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru pada 20:18 WIB.
 - Snapshot lengkap tersimpan di `C:\Users\MRX\Desktop\Aronium-UOM-Savepoints\savepoint-1` dan `savepoint-1.zip`.
-- Snapshot mencakup source/build modul v1.0.1, installer EXE/ZIP, migration, tools, database SQLite konsisten terbaru, manifest SHA-256, dan script restore.
-- GitHub commit yang ditandai: `0bf89ef7f455ba7cd4765d1a2b241a17b792a12a`.
-- Branch: `savepoint/1`; tag: `savepoint-1`; release: `v1.0.1`.
+- Snapshot mencakup source/build modul v1.0.2, installer EXE/ZIP, migration, tools, database SQLite konsisten terbaru, manifest SHA-256, dan script restore.
+- Commit GitHub terbaru dicatat pada manifest `savepoint-1.json`; checksum ZIP final dicatat pada README indeks savepoint.
+- Branch: `savepoint/1`; tag: `savepoint-1`; release: `v1.0.2`.
 - Database snapshot bersifat lokal dan tidak diunggah ke repository publik.
 - Restore dilakukan melalui `RESTORE-SAVEPOINT-1.ps1 -RestoreDatabase`.
 
