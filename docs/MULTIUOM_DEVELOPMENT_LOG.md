@@ -1,6 +1,6 @@
 # Log Pengembangan Aronium Multi-UOM
 
-_Status terakhir: 2026-11-25_
+_Status terakhir: 2026-11-27_
 
 ## Tujuan
 
@@ -81,6 +81,24 @@ Menambahkan dukungan multi-satuan (UOM), konversi ke satuan stok, harga per satu
 - Database dibackup sebelum instalasi; checksum DLL terverifikasi dan log installer disimpan di `%LOCALAPPDATA%\Aronium\Log\ModuleUomInstaller.log`.
 - Installer berhasil dijalankan pada PC ini dan module tetap berhasil dimuat setelah instalasi.
 - Paket ZIP tersedia di `Tools\Install-Aronium-UOM-1.51.1.0.zip`.
+
+### Installer gabungan UOM + ReceiptPrinter Patch (2026-11-27)
+
+- Installer `Install-Aronium-UOM.exe` versi `1.0.4` sekarang memasang Module UOM dan patch ReceiptPrinter dalam satu proses.
+- Payload patch ReceiptPrinter baked-in sebagai resource; installer tidak bergantung pada file patcher terpisah.
+- Hash ReceiptPrinter asli yang diizinkan: `74556BE1B965D1679619FD060D29F5ACD40C24B66935C77A1C223483971621A0`.
+- Hash ReceiptPrinter patched: `2AC1C0458802AFB297FADDC156CFB92FCAADFF7AB033F592222C3DF9F22DDFF9`.
+- Build di luar kedua hash ditolak sebelum file aplikasi diubah.
+- Installer mencadangkan database, mempertahankan backup DLL ReceiptPrinter asli, memverifikasi checksum, dan mengembalikan snapshot file bila instalasi gagal di tengah proses.
+- Perilaku idempotent: payload UOM yang sama tidak ditulis ulang, ReceiptPrinter yang sudah patched tidak diganti, dan nilai `PrintPaymentTypes` yang sudah ada dipertahankan. Jika belum ada, default `false`.
+- Mode restore: `--restore-receipt-patch --path "C:\Program Files\Aronium"` mengembalikan DLL asli dan menghapus setting patch tanpa menghapus Module UOM.
+- Staging test lulus untuk fresh install, instalasi ulang, restore, penolakan hash unsupported, dan rollback setelah kegagalan konfigurasi.
+- Pada instalasi aktif, UOM dan ReceiptPrinter sudah terpasang; setting `PrintPaymentTypes=false` dipertahankan.
+- Smoke test menemukan bahwa payload `.dll` di dalam tree `Modules` menyebabkan Aronium memuat ReceiptPrinter dua kali dan menghasilkan `Duplicated module name`. Akar masalah payload source ikut terindeks bukan logika patch. Payload dipindahkan menjadi `.payload` sehingga tidak dipindai sebagai assembly.
+- Setelah perbaikan, Aronium POS 1.51.1.0 start tanpa error baru dan log mengonfirmasi `Initializing Aronium.Pos.MultiUom module` serta inisialisasi `Aronium.Pos.ReceiptPrinter.DecimalHandler`.
+- Installer SHA-256: `0E34F65D83F36FA14AE4136A9FC2F1E262534FD2C9EAEEEA9157A82CBBE57D14`.
+- Paket ZIP SHA-256: `208816F511DBB225BC6982E47FCB5757287434A8C01B2A1CEA028CAFD7641111`.
+- Source installer, payload, build script, dan tool patcher standalone disertakan di source repository.
 
 ### Savepoint 1 — dibuat ulang (2026-11-25)
 

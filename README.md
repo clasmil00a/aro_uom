@@ -9,18 +9,18 @@ Module UOM (Unit of Measure) untuk Aronium POS 1.51.1.0. Modul ini menambahkan p
 - Harga per satuan dan tier harga berdasarkan kuantitas.
 - Audit detail UOM pada `PosOrderItemMultiUom` dan `DocumentItemMultiUom`.
 - Editor native pada tab **Satuan & Harga** di Management → Products.
-- Installer mandiri untuk PC dengan Aronium POS 1.51.1.0.
+- Installer mandiri yang memasang Module UOM sekaligus patch ReceiptPrinter untuk PC dengan Aronium POS 1.51.1.0.
 
 ## Rilis terbaru
 
-Rilis `v1.0.3` memperbaiki alur menghapus seluruh satuan produk, menyimpan, lalu membuat satuan baru. Lookup `ProductUnit` kini aman ketika belum ada baris sehingga tidak lagi menampilkan error `Expected a non-null scalar value ... query returned no rows`.
+Rilis `v1.0.4` menyatukan instalasi Module UOM dan patch ReceiptPrinter ke dalam satu EXE. Installer membuat backup database dan DLL ReceiptPrinter asli, memverifikasi hash build yang didukung, mempertahankan setting `PrintPaymentTypes` yang sudah ada, menyediakan rollback, dan dapat dijalankan ulang dengan aman.
 
 Unduhan:
 
 - `Install-Aronium-UOM.exe`
 - `Install-Aronium-UOM-1.51.1.0.zip`
 
-Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releases/tag/v1.0.3).
+Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releases/tag/v1.0.4).
 
 ## Kompatibilitas
 
@@ -33,9 +33,17 @@ Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releas
 
 1. Unduh `Tools/Install-Aronium-UOM.exe` dari repository ini.
 2. Salin ke PC tujuan.
-3. Jalankan file tersebut.
+3. Tutup Aronium POS, lalu jalankan file tersebut.
 4. Setujui prompt administrator.
-5. Installer akan memeriksa versi, membuat backup database, memasang modul dan migration, serta memverifikasi checksum DLL.
+5. Installer memeriksa versi Aronium, .NET Framework, dan hash ReceiptPrinter; membuat backup; memasang UOM serta patch ReceiptPrinter; lalu memverifikasi checksum DLL.
+
+Installer bersifat idempotent. Module UOM dan ReceiptPrinter yang sudah menggunakan payload terbaru tidak ditulis ulang, sedangkan nilai `PrintPaymentTypes` yang sudah ada dipertahankan. Jika belum ada, nilai default-nya nonaktif.
+
+Restore patch ReceiptPrinter tanpa menghapus Module UOM:
+
+```powershell
+Install-Aronium-UOM.exe --restore-receipt-patch --path "C:\Program Files\Aronium"
+```
 
 Log installer:
 
@@ -47,6 +55,12 @@ Backup database:
 
 ```text
 %LOCALAPPDATA%\Aronium\Data\pos.db.bak_multiuom_install_*
+```
+
+Backup DLL ReceiptPrinter asli:
+
+```text
+%LOCALAPPDATA%\Aronium\ReceiptPrinterPaymentTypesPatch
 ```
 
 ## Instalasi manual
@@ -120,7 +134,7 @@ Build installer:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\module\build-installer.ps1"
 ```
 
-Installer membutuhkan payload modul, language files, migration, dan README dari instalasi Aronium lokal.
+Installer membutuhkan payload modul, language files, migration, README, dan payload ReceiptPrinter patched dari source tree. Payload ReceiptPrinter disimpan dengan ekstensi `.payload` agar tidak dipindai Aronium sebagai assembly kedua.
 
 ## Struktur repository
 
@@ -134,6 +148,8 @@ docs/         Log pengembangan
 ## Catatan keamanan
 
 - Backup database selalu dilakukan installer sebelum mengubah file.
+- Backup DLL ReceiptPrinter asli dibuat dan tidak ditimpa saat patch sudah terpasang.
 - Installer menolak Aronium yang sedang berjalan.
-- Installer menolak versi Aronium atau .NET Framework yang tidak kompatibel.
+- Installer menolak versi Aronium, .NET Framework, atau hash ReceiptPrinter yang tidak kompatibel.
+- Kegagalan di tengah instalasi memicu rollback file yang sudah diubah.
 - Uninstall modul tidak menghapus data konfigurasi/audit secara otomatis.

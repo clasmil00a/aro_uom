@@ -15,6 +15,9 @@ namespace Aronium.Pos.MultiUom.Installer
         public string Message;
         public string BackupPath;
         public string AroniumPath;
+        public string ReceiptPatchBackupPath;
+        public bool UomAlreadyInstalled;
+        public bool ReceiptPatchAlreadyApplied;
     }
 
     internal static partial class InstallerPayload
@@ -62,6 +65,28 @@ namespace Aronium.Pos.MultiUom.Installer
 
         public static string FindAronium()
         {
+            return FindAronium(null);
+        }
+
+        public static string FindAronium(string suppliedPath)
+        {
+            if (!string.IsNullOrWhiteSpace(suppliedPath))
+            {
+                string supplied = suppliedPath.Trim().Trim('"');
+                if (File.Exists(supplied))
+                {
+                    if (!string.Equals(Path.GetFileName(supplied), "Aronium.Pos.exe", StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidOperationException("Path executable harus menunjuk ke Aronium.Pos.exe.");
+                    return Path.GetFullPath(supplied);
+                }
+                if (Directory.Exists(supplied))
+                {
+                    string executable = Path.Combine(Path.GetFullPath(supplied), "Aronium.Pos.exe");
+                    if (File.Exists(executable)) return executable;
+                }
+                throw new FileNotFoundException("Aronium.Pos.exe tidak ditemukan pada path yang diberikan: " + supplied, supplied);
+            }
+
             var candidates = new List<string>();
             foreach (string root in new[] { Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86) })
                 if (!string.IsNullOrEmpty(root)) candidates.Add(Path.Combine(root, "Aronium", "Aronium.Pos.exe"));
@@ -96,7 +121,10 @@ namespace Aronium.Pos.MultiUom.Installer
 
         public static string BackupDatabase()
         {
-            string db = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Aronium", "Data", "pos.db");
+            string dataRoot = Environment.GetEnvironmentVariable("ARONIUM_PATCH_DATA_ROOT");
+            if (string.IsNullOrWhiteSpace(dataRoot))
+                dataRoot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string db = Path.Combine(dataRoot, "Aronium", "Data", "pos.db");
             if (!File.Exists(db)) return null;
             string stamp = DateTime.Now.ToString("yyyyMMdd_HHmmss_fff");
             string backup = db + ".bak_multiuom_install_" + stamp;

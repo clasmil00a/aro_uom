@@ -1,5 +1,5 @@
-Aronium Multi-UOM & Price Manager
-=================================
+Aronium Multi-UOM & Price Manager + ReceiptPrinter Patch
+==========================================================
 
 STATUS SAAT INI
 ---------------
@@ -14,20 +14,49 @@ Modul ini:
 - menyimpan detail UOM pada PosOrderItem dan DocumentItem;
 - menyediakan tab "Satuan & Harga" pada pengelolaan produk.
 
-Versi paket: 1.0.3
+Installer v1.0.4 juga menerapkan patch resmi ReceiptPrinter yang menambahkan
+toggle "Tampilkan tipe pembayaran" pada Settings > Print options > Customize
+receipt. Patch ini terpisah dari detail satuan alternatif pada receipt.
+
+Versi paket: 1.0.4
+
+Catatan v1.0.4: installer tunggal sekarang memasang Module UOM dan patch
+ReceiptPrinter. Installer aman dijalankan ulang, mempertahankan setting yang
+sudah ada, dan dapat memulihkan DLL ReceiptPrinter asli.
 
 Catatan v1.0.3: alur hapus seluruh satuan produk, simpan, lalu buat
 satuan baru sudah diperbaiki dan tidak lagi menampilkan error scalar SQLite.
 
 INSTALLER OTOMATIS
 ------------------
-Di PC lain dengan Aronium POS 1.51.1.0, jalankan:
+Di PC lain dengan Aronium POS 1.51.1.0, tutup Aronium, lalu jalankan:
 
   C:\Program Files\Aronium\Tools\Install-Aronium-UOM.exe
 
-Installer meminta persetujuan administrator, mengecek versi Aronium dan .NET
-Framework, membackup database, memasang modul serta migration, dan memverifikasi
-checksum DLL. Salin hanya file EXE tersebut ke PC tujuan.
+Installer meminta persetujuan administrator, mengecek versi Aronium, .NET
+Framework, serta hash build ReceiptPrinter yang didukung. Installer kemudian:
+- membuat backup database pos.db;
+- memasang modul UOM, bahasa, dan migration;
+- memasang patch ReceiptPrinter serta toggle tipe pembayaran;
+- memverifikasi checksum DLL dan memulihkan kondisi lama jika ada kegagalan.
+
+Bila setting PrintPaymentTypes sudah ada, nilainya dipertahankan. Bila belum
+ada, default-nya nonaktif. Salin hanya file EXE tersebut ke PC tujuan.
+
+Restore patch ReceiptPrinter (Module UOM tetap terpasang):
+
+  Install-Aronium-UOM.exe --restore-receipt-patch --path "C:\Program Files\Aronium"
+
+Opsi command-line lain:
+
+  --enable-payment-types    Aktifkan tipe pembayaran saat instalasi.
+  --disable-payment-types   Nonaktifkan tipe pembayaran saat instalasi.
+  --no-launch               Jangan mulai Aronium setelah installer selesai.
+  --no-pause                Jangan menunggu tombol Enter.
+
+Backup DLL ReceiptPrinter asli berada di:
+
+  %LOCALAPPDATA%\Aronium\ReceiptPrinterPaymentTypesPatch
 
 CARA MENGELOLA DATA PRODUK
 ---------------------------

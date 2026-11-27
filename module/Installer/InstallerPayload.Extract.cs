@@ -10,6 +10,7 @@ namespace Aronium.Pos.MultiUom.Installer
         public const string EnglishResource = "UomPayload.en.lang";
         public const string MigrationResource = "UomPayload.1_0__Add_MultiUom_Transaction_Details.sql";
         public const string ReadmeResource = "UomPayload.README_MultiUOM.txt";
+        public const string ReceiptPatchedResource = "ReceiptPatchPayload.Aronium.Pos.ReceiptPrinter.dll";
 
         public static string ExtractPayload(string tempDirectory)
         {
@@ -19,6 +20,7 @@ namespace Aronium.Pos.MultiUom.Installer
             Write(tempDirectory, "en.lang", EnglishResource);
             Write(tempDirectory, "1_0__Add_MultiUom_Transaction_Details.sql", MigrationResource);
             Write(tempDirectory, "README_MultiUOM.txt", ReadmeResource);
+            Write(tempDirectory, "Aronium.Pos.ReceiptPrinter.patched.dll", ReceiptPatchedResource);
             return tempDirectory;
         }
 
