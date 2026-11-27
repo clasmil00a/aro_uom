@@ -100,13 +100,13 @@ Menambahkan dukungan multi-satuan (UOM), konversi ke satuan stok, harga per satu
 - Paket ZIP SHA-256: `208816F511DBB225BC6982E47FCB5757287434A8C01B2A1CEA028CAFD7641111`.
 - Source installer, payload, build script, dan tool patcher standalone disertakan di source repository.
 
-### Savepoint 1 — dibuat ulang (2026-11-25)
+### Savepoint 1 — dibuat ulang (2026-11-27)
 
-- Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru setelah perbaikan hapus lalu buat ulang satuan.
+- Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru setelah installer UOM + ReceiptPrinter Patch v1.0.4.
 - Snapshot lengkap tersimpan di `C:\Users\MRX\Desktop\Aronium-UOM-Savepoints\savepoint-1` dan `savepoint-1.zip`.
-- Snapshot mencakup source/build modul v1.0.3, installer EXE/ZIP, migration, tools, database SQLite konsisten terbaru, manifest SHA-256, dan script restore.
-- Commit GitHub terbaru dicatat pada manifest `savepoint-1.json`; checksum ZIP final dicatat pada README indeks savepoint.
-- Branch: `savepoint/1`; tag: `savepoint-1`; release: `v1.0.3`.
+- Snapshot mencakup source/build modul v1.0.3, installer gabungan EXE/ZIP, payload dan source patcher ReceiptPrinter, migration, tools, database SQLite konsisten terbaru, manifest SHA-256, dan script restore.
+- Script restore sekarang menjalankan installer gabungan untuk memastikan Module UOM dan patch ReceiptPrinter terpasang tanpa menghapus Module UOM saat restore patch.
+- Commit release: `5afe087e4684248f7eb26c01f65c95a9d7b522ee`; branch: `savepoint/1`; tag: `savepoint-1`; release: `v1.0.4`.
 - Database snapshot bersifat lokal dan tidak diunggah ke repository publik.
 - Restore dilakukan melalui `RESTORE-SAVEPOINT-1.ps1 -RestoreDatabase`.
 
