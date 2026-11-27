@@ -12,6 +12,7 @@ namespace Aronium.Pos.MultiUom.Installer
     internal enum ReceiptPatchState
     {
         Original,
+        PreviousPatched,
         AlreadyPatched
     }
 
@@ -20,7 +21,8 @@ namespace Aronium.Pos.MultiUom.Installer
         public const string ReceiptModuleName = "Aronium.Pos.ReceiptPrinter";
         public const string ReceiptBackupFolderName = "ReceiptPrinterPaymentTypesPatch";
         public const string SupportedOriginalReceiptHash = "74556BE1B965D1679619FD060D29F5ACD40C24B66935C77A1C223483971621A0";
-        public const string PatchedReceiptHash = "2AC1C0458802AFB297FADDC156CFB92FCAADFF7AB033F592222C3DF9F22DDFF9";
+        public const string PreviousPatchedReceiptHash = "2AC1C0458802AFB297FADDC156CFB92FCAADFF7AB033F592222C3DF9F22DDFF9";
+        public const string PatchedReceiptHash = "EE06C72209FCF759695321E31026CA75C5E7804AA2ACEB1CEFF5C4D4BFF59E58";
 
         public static ReceiptPatchState ValidateReceiptPatchTarget(string appPath, byte[] patchedAssembly)
         {
@@ -36,8 +38,9 @@ namespace Aronium.Pos.MultiUom.Installer
 
             string currentHash = ComputeFileHash(modulePath);
             bool isPatched = string.Equals(currentHash, PatchedReceiptHash, StringComparison.OrdinalIgnoreCase);
+            bool isPreviousPatched = string.Equals(currentHash, PreviousPatchedReceiptHash, StringComparison.OrdinalIgnoreCase);
             bool isOriginal = string.Equals(currentHash, SupportedOriginalReceiptHash, StringComparison.OrdinalIgnoreCase);
-            if (!isPatched && !isOriginal)
+            if (!isPatched && !isPreviousPatched && !isOriginal)
                 throw new InvalidOperationException(
                     "Build ReceiptPrinter ini tidak didukung. Hash terpasang: " + currentHash +
                     ". File asli tidak diubah.");
@@ -48,7 +51,9 @@ namespace Aronium.Pos.MultiUom.Installer
             if (name.Version == null || name.Version.Major != 1)
                 throw new InvalidOperationException("Versi module ReceiptPrinter tidak didukung: " + name.Version + ".");
 
-            return isPatched ? ReceiptPatchState.AlreadyPatched : ReceiptPatchState.Original;
+            if (isPatched) return ReceiptPatchState.AlreadyPatched;
+            if (isPreviousPatched) return ReceiptPatchState.PreviousPatched;
+            return ReceiptPatchState.Original;
         }
 
         public static ReceiptPatchState InstallReceiptPatch(
@@ -79,6 +84,17 @@ namespace Aronium.Pos.MultiUom.Installer
 
                 CopyAtomicBytes(patchedAssembly, modulePath);
                 log("Patch ReceiptPrinter berhasil dipasang.");
+            }
+            else if (state == ReceiptPatchState.PreviousPatched)
+            {
+                if (!File.Exists(originalBackup))
+                    throw new FileNotFoundException("Patch sebelumnya terpasang, tetapi backup DLL ReceiptPrinter asli tidak ditemukan: " + originalBackup, originalBackup);
+                string backupHash = ComputeFileHash(originalBackup);
+                if (!string.Equals(backupHash, SupportedOriginalReceiptHash, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("Backup DLL ReceiptPrinter asli tidak valid: " + backupHash);
+
+                CopyAtomicBytes(patchedAssembly, modulePath);
+                log("Patch ReceiptPrinter berhasil diperbarui ke layout separator terbaru.");
             }
             else
             {
@@ -128,6 +144,7 @@ namespace Aronium.Pos.MultiUom.Installer
                 throw new FileNotFoundException("Module ReceiptPrinter tidak ditemukan: " + modulePath, modulePath);
             string currentHash = ComputeFileHash(modulePath);
             if (!string.Equals(currentHash, PatchedReceiptHash, StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(currentHash, PreviousPatchedReceiptHash, StringComparison.OrdinalIgnoreCase) &&
                 !string.Equals(currentHash, SupportedOriginalReceiptHash, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("Module ReceiptPrinter saat ini memiliki hash yang tidak didukung: " + currentHash);
 

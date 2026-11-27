@@ -13,14 +13,14 @@ Module UOM (Unit of Measure) untuk Aronium POS 1.51.1.0. Modul ini menambahkan p
 
 ## Rilis terbaru
 
-Rilis `v1.0.4` menyatukan instalasi Module UOM dan patch ReceiptPrinter ke dalam satu EXE. Installer membuat backup database dan DLL ReceiptPrinter asli, memverifikasi hash build yang didukung, mempertahankan setting `PrintPaymentTypes` yang sudah ada, menyediakan rollback, dan dapat dijalankan ulang dengan aman.
+Rilis `v1.0.5` memperbaiki layout receipt pada patch ReceiptPrinter. Separator `====` kini selalu tampil di atas dan di bawah `TOTAL`, baik ketika **Tampilkan tipe pembayaran** aktif maupun nonaktif. Installer dapat meng-upgrade patch `v1.0.4` tanpa menghapus Module UOM, kehilangan backup DLL asli, atau mengubah setting yang sudah ada.
 
 Unduhan:
 
 - `Install-Aronium-UOM.exe`
 - `Install-Aronium-UOM-1.51.1.0.zip`
 
-Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releases/tag/v1.0.4).
+Rilis tersedia di [GitHub Releases](https://github.com/clasmil00a/aro_uom/releases/tag/v1.0.5).
 
 ## Kompatibilitas
 

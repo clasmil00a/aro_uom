@@ -100,6 +100,19 @@ Menambahkan dukungan multi-satuan (UOM), konversi ke satuan stok, harga per satu
 - Paket ZIP SHA-256: `208816F511DBB225BC6982E47FCB5757287434A8C01B2A1CEA028CAFD7641111`.
 - Source installer, payload, build script, dan tool patcher standalone disertakan di source repository.
 
+### Perbaikan separator TOTAL pada receipt (2026-11-27)
+
+- Gejala: ketika `PrintPaymentTypes` dinonaktifkan, garis pemisah `====` hanya tampil di atas `TOTAL`; sebelumnya garis tersebut tampil di atas dan di bawah.
+- Akar masalah: receipt patched memasukkan pencetakan separator bawah `TOTAL` ke dalam blok kondisi `PrintPaymentTypes`, sehingga ikut hilang ketika tipe pembayaran disembunyikan.
+- Perbaikan: separator bawah `TOTAL` sekarang dicetak tanpa syarat, sedangkan baris tipe pembayaran dan separator `-` tetap hanya tampil ketika toggle aktif.
+- Layout nonaktif: `====` di atas dan bawah `TOTAL`, lalu langsung `Paid amount`.
+- Layout aktif: `====` di atas dan bawah `TOTAL`, baris `Cash:`, separator `-`, lalu `Paid amount`.
+- Payload ReceiptPrinter terbaru: `EE06C72209FCF759695321E31026CA75C5E7804AA2ACEB1CEFF5C4D4BFF59E58`.
+- Installer v1.0.5 menerima patch sebelumnya `2AC1C0458802AFB297FADDC156CFB92FCAADFF7AB033F592222C3DF9F22DDFF9` untuk upgrade aman tanpa kehilangan backup DLL asli atau setting.
+- Output aktif dan nonaktif diverifikasi langsung menggunakan DLL ReceiptPrinter yang terpasang; Aronium POS 1.51.1.0 juga berhasil start tanpa error baru.
+- Installer SHA-256: `1950A07E50A996856F3DDD66BDA7263BA36F1885B6F6792CE1B981D94D134E15`.
+- Paket ZIP SHA-256: `D29F4C992D692F14539A75AB61D8F74CED2967BDA11E6FCD069F99805AC05D2B`.
+
 ### Savepoint 1 — dibuat ulang (2026-11-27)
 
 - Snapshot sebelumnya dibatalkan dan diganti dengan kondisi terbaru setelah installer UOM + ReceiptPrinter Patch v1.0.4.

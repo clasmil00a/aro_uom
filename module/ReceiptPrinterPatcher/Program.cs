@@ -13,6 +13,7 @@ internal static class Program
     private const string ModuleName = "Aronium.Pos.ReceiptPrinter";
     private const string BackupFolderName = "ReceiptPrinterPaymentTypesPatch";
     private const string SupportedOriginalHash = "74556BE1B965D1679619FD060D29F5ACD40C24B66935C77A1C223483971621A0";
+    private const string SupportedPreviousPatchedHash = "2AC1C0458802AFB297FADDC156CFB92FCAADFF7AB033F592222C3DF9F22DDFF9";
     private static byte[] patchedAssembly;
 
     [STAThread]
@@ -136,12 +137,21 @@ internal static class Program
         byte[] patched = patchedAssembly;
         bool alreadyPatched = current.SequenceEqual(patched);
         string currentHash = ComputeHash(current);
-        if (!alreadyPatched && !String.Equals(currentHash, SupportedOriginalHash, StringComparison.OrdinalIgnoreCase) && !force)
+        bool previousPatched = String.Equals(currentHash, SupportedPreviousPatchedHash, StringComparison.OrdinalIgnoreCase);
+        if (!alreadyPatched && !previousPatched && !String.Equals(currentHash, SupportedOriginalHash, StringComparison.OrdinalIgnoreCase) && !force)
             throw new InvalidOperationException("This Aronium build is not the tested version. Use --force only after making a backup.");
         if (!alreadyPatched && !File.Exists(originalBackup))
         {
+            if (previousPatched)
+                throw new InvalidOperationException("The previous patched module is installed, but the original DLL backup was not found: " + originalBackup);
             File.WriteAllBytes(originalBackup, current);
             Console.WriteLine("Backup: " + originalBackup);
+        }
+        if (File.Exists(originalBackup))
+        {
+            string backupHash = ComputeHash(File.ReadAllBytes(originalBackup));
+            if (!String.Equals(backupHash, SupportedOriginalHash, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("The original DLL backup is invalid: " + backupHash);
         }
 
         string tempPath = modulePath + ".patch-new";

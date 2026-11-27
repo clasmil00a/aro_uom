@@ -13,7 +13,7 @@ foreach ($file in @($dll,$idLang,$enLang,$migration,$readme,$receiptPatched)) {
     if (!(Test-Path -LiteralPath $file)) { throw "Payload installer tidak ditemukan: $file" }
 }
 $receiptHash = (Get-FileHash -LiteralPath $receiptPatched -Algorithm SHA256).Hash
-if ($receiptHash -ne '2AC1C0458802AFB297FADDC156CFB92FCAADFF7AB033F592222C3DF9F22DDFF9') {
+if ($receiptHash -ne 'EE06C72209FCF759695321E31026CA75C5E7804AA2ACEB1CEFF5C4D4BFF59E58') {
     throw "Hash payload ReceiptPrinter tidak valid: $receiptHash"
 }
 $sources = Get-ChildItem $installer -Filter '*.cs' | ForEach-Object { $_.FullName }
@@ -22,10 +22,11 @@ if ($LASTEXITCODE -ne 0) { throw "Build installer gagal: $LASTEXITCODE" }
 $hash = (Get-FileHash $output -Algorithm SHA256).Hash
 $manifest = [ordered]@{
     module = 'Aronium.Pos.MultiUom'
-    installerVersion = '1.0.4'
+    installerVersion = '1.0.5'
     requiredAroniumVersion = '1.51.1.0'
     payloadSha256 = $hash
     receiptPrinterOriginalSha256 = '74556BE1B965D1679619FD060D29F5ACD40C24B66935C77A1C223483971621A0'
+    receiptPrinterPreviousPatchedSha256 = '2AC1C0458802AFB297FADDC156CFB92FCAADFF7AB033F592222C3DF9F22DDFF9'
     receiptPrinterPatchedSha256 = $receiptHash
 }
 $manifest | ConvertTo-Json | Set-Content (Join-Path $installer 'payload-manifest.json') -Encoding UTF8

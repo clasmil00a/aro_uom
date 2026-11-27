@@ -14,11 +14,16 @@ Modul ini:
 - menyimpan detail UOM pada PosOrderItem dan DocumentItem;
 - menyediakan tab "Satuan & Harga" pada pengelolaan produk.
 
-Installer v1.0.4 juga menerapkan patch resmi ReceiptPrinter yang menambahkan
+Installer v1.0.5 juga menerapkan patch resmi ReceiptPrinter yang menambahkan
 toggle "Tampilkan tipe pembayaran" pada Settings > Print options > Customize
 receipt. Patch ini terpisah dari detail satuan alternatif pada receipt.
 
-Versi paket: 1.0.4
+Versi paket: 1.0.5
+
+Catatan v1.0.5: layout receipt mempertahankan separator `====` di atas dan
+bawah `TOTAL` baik saat "Tampilkan tipe pembayaran" aktif maupun nonaktif.
+Installer v1.0.5 dapat meng-upgrade patch ReceiptPrinter sebelumnya ke layout
+terbaru tanpa menghapus Module UOM atau mengubah setting yang sudah ada.
 
 Catatan v1.0.4: installer tunggal sekarang memasang Module UOM dan patch
 ReceiptPrinter. Installer aman dijalankan ulang, mempertahankan setting yang

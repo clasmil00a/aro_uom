@@ -54,6 +54,7 @@ namespace Aronium.Pos.MultiUom.Installer
                 result.UomAlreadyInstalled = FileExistsWithSameHash(
                     Path.Combine(module, "Aronium.Pos.MultiUom.dll"), uomPayload);
                 result.ReceiptPatchAlreadyApplied = receiptState == ReceiptPatchState.AlreadyPatched;
+                result.ReceiptPatchUpgraded = receiptState == ReceiptPatchState.PreviousPatched;
 
                 log("Mencadangkan database...");
                 result.BackupPath = BackupDatabase();
@@ -74,6 +75,8 @@ namespace Aronium.Pos.MultiUom.Installer
                     log("Module UOM sudah terpasang dengan payload yang sama; tidak ada perubahan modul.");
                 if (result.ReceiptPatchAlreadyApplied)
                     log("Patch ReceiptPrinter sudah terpasang; setting yang ada dipertahankan.");
+                if (result.ReceiptPatchUpgraded)
+                    log("Patch ReceiptPrinter sebelumnya berhasil diperbarui; setting yang ada dipertahankan.");
                 if (launchAronium) Process.Start(new ProcessStartInfo(executable) { WorkingDirectory = app });
             }
             catch (Exception ex)

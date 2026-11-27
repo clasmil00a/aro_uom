@@ -18,6 +18,7 @@ namespace Aronium.Pos.MultiUom.Installer
         public string ReceiptPatchBackupPath;
         public bool UomAlreadyInstalled;
         public bool ReceiptPatchAlreadyApplied;
+        public bool ReceiptPatchUpgraded;
     }
 
     internal static partial class InstallerPayload
